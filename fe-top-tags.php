@@ -37,9 +37,13 @@ add_filter( 'fe_gtpm_get_terms', 'fe_sort_terms_by_desc_count' );
  *         most recent posts for each term.
  */
 function fe_top_tags_shortcode() {
-	$output = '';
 
-	$output .= fe_get_terms_posts_markup();
+	$output = get_transient( 'fe_tts_output' );
+	if ( false !== $output ) { return $output; }
+
+	$output = fe_get_terms_posts_markup();
+
+	set_transient( 'fe_tts_output', $output, 86400 );
 
 	return $output;
 }

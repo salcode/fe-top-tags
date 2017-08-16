@@ -26,6 +26,9 @@ add_shortcode( 'fe_top_tags', 'fe_top_tags_shortcode' );
 // Apply our filter to sort the terms.
 add_filter( 'fe_gtpm_get_terms', 'fe_sort_terms_by_desc_count' );
 
+// Trigger our function when a post is saved.
+add_action( 'save_post', 'fe_tts_clear_transient', 10, 2 );
+
 /**
  * Get HTML markup for the post_terms with the highest count and the
  * first few posts from each of them.
@@ -77,4 +80,16 @@ function fe_compare_terms_by_count( $term_a, $term_b ) {
 		return 1;
 	}
 	return -1;
+}
+
+/**
+ * If a post is saved (i.e. not a page or CPT), clear the transient.
+ *
+ * @param int     $post_id The id of the post being saved.
+ * @param WP_Post $post    The post being saved.
+ */
+function fe_tts_clear_transient( $post_id, $post ) {
+	if ( $post && 'post' === $post->post_type ) {
+		delete_transient( 'fe_tts_output' );
+	}
 }
